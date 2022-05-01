@@ -1,5 +1,4 @@
-import os
-import logging
+import os,logging,datetime
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 from linebot import (
@@ -20,7 +19,8 @@ def lambda_handler(event, context):
 
     @LINE_HANDLER.add(MessageEvent, message=TextMessage)
     def on_message(line_event):
-        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage("こんにちは！"))
+        now = datetime.datetime.now()
+        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(now))
 
     LINE_HANDLER.handle(body, signature)
     return 0
