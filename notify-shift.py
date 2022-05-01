@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     @LINE_HANDLER.add(MessageEvent, message=TextMessage)
     def on_message(line_event):
         now = datetime.datetime.now()
-        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(now))
+        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(str(now)))
 
     LINE_HANDLER.handle(body, signature)
     return 0
