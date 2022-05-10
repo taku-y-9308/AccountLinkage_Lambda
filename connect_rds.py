@@ -1,11 +1,20 @@
 import sys,os,logging,pymysql
+from linebot import (
+    LineBotApi, WebhookHandler
+)
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage
+)
+LINE_CHANNEL_ACCESS_TOKEN   = os.environ['LINE_CHANNEL_ACCESS_TOKEN']
+LINE_CHANNEL_SECRET         = os.environ['LINE_CHANNEL_SECRET']
+LINE_BOT_API = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 rds_host = os.environ['RDS_HOST']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 db_name = os.environ['DB_NAME']
 
-logger = logging.getLogger
+logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 try:
