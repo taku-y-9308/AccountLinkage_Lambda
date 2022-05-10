@@ -15,7 +15,7 @@ password = os.environ['PASSWORD']
 db_name = os.environ['DB_NAME']
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 try:
     conn = pymysql.connect(host=rds_host,user=username,passwd=password,db=db_name,connect_timeout=5)
@@ -30,5 +30,6 @@ def handler(event, context):
     with conn.cursor() as cur:
         cur.execute("select * from ShiftManagementApp_user")
         conn.commit()
+        logging.debug(cur.fetchall())
         print(cur.fetchall())
     conn.commit()
