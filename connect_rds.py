@@ -28,8 +28,7 @@ except pymysql.MySQLError as e:
 logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
 def handler(event, context):
     with conn.cursor() as cur:
-        cur.execute("select * from ShiftManagementApp_user")
+        cur.execute("select * from ShiftManagementApp_shift")
         conn.commit()
         logging.debug(cur.fetchall())
-        print(cur.fetchall())
     conn.commit()
