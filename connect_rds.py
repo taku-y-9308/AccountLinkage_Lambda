@@ -30,5 +30,5 @@ def handler(event, context):
     with conn.cursor() as cur:
         cur.execute("select * from ShiftManagementApp_user")
         conn.commit()
-        print(cur.fetchone())
+        print(cur.fetchall())
     conn.commit()
