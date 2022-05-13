@@ -17,7 +17,7 @@ except psycopg2.OperationalError as e:
     logging.error(e)
     sys.exit()
 
-logger.info("SUCCESS: Connection to RDS MySQL instance succeeded")
+logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
 def handler(event, context):
     with conn.cursor() as cur:
         cur.execute('select * from "ShiftManagementApp_shift";')
