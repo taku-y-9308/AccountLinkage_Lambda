@@ -10,7 +10,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 try:
-    conn = psycopg2.connect(dbname=dbname,user=username,password=password,host=host,port=port)
+    conn = psycopg2.connect(f"dbname={dbname} user={username} password={password} host={host} port={port}")
 
 except psycopg2.OperationalError as e:
     logging.error('ERROR: Unexpected error: Could not connect to PostgreSQL instance.')
