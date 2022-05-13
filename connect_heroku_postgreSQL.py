@@ -20,8 +20,10 @@ except psycopg2.OperationalError as e:
 logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
 def handler(event, context):
     with conn.cursor() as cur:
-        cur.execute('select * from "ShiftManagementApp_shift";')
+        cur.execute('select date,begin,finish,user_id,username from "ShiftManagementApp_shift" inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id;')
         conn.commit()
-        logging.debug(cur.fetchall())
+        results = cur.fetchall()
+        for result in results:
+            print(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
     conn.commit()
     conn.close()
