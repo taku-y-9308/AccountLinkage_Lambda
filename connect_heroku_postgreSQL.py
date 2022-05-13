@@ -12,7 +12,7 @@ logger.setLevel(logging.DEBUG)
 try:
     conn = psycopg2.connect(dbname=dbname,user=username,password=password,host=host,port=port)
 
-except psycopg2.MySQLError as e:
+except psycopg2.OperationalError as e:
     logging.error('ERROR: Unexpected error: Could not connect to MySQL instance.')
     logging.error(e)
     sys.exit()
