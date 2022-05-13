@@ -1,6 +1,6 @@
 import sys,os,logging,psycopg2
 
-host = os.environ['RDS_HOST']
+host = os.environ['HOST']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 dbname = os.environ['DB_NAME']
