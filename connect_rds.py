@@ -13,12 +13,13 @@ rds_host = os.environ['RDS_HOST']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 db_name = os.environ['DB_NAME']
+port = os.environ['PORT']
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 try:
-    conn = pymysql.connect(host=rds_host,user=username,passwd=password,db=db_name,connect_timeout=5)
+    conn = pymysql.connect(host=rds_host,port=port,user=username,passwd=password,db=db_name,connect_timeout=5)
 
 except pymysql.MySQLError as e:
     logging.error('ERROR: Unexpected error: Could not connect to MySQL instance.')
