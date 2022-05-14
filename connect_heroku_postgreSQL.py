@@ -1,5 +1,5 @@
 from email import message
-import sys,os,logging,psycopg2
+import sys,os,logging,psycopg2,json
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -31,20 +31,37 @@ except psycopg2.OperationalError as e:
 logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
 def handler(event, context):
     logger.info(event)
+    body_str = event["body"]
+    body_dict = json.loads(body_str)
+    logger.info(type(body_dict))
+    line_user_id = body_dict["events"][0]["source"]["userId"]
+    logger.info(f"line_user_id:{line_user_id}")
     signature = event["headers"]["x-line-signature"]
     body = event["body"]
+
     with conn.cursor() as cur:
+        
+        #シフトを収集
         cur.execute('select date,begin,finish,user_id,username from "ShiftManagementApp_shift" inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id;')
-        conn.commit()
-        results = cur.fetchall()
+        results_shifts = cur.fetchall()
+        logger.info(results_shifts)
+        tomorrow_shift_lists = []
+        for result_shift in results_shifts:
+            tomorrow_shift_lists.append({
+                "user" : result_shift[4],
+                "date" : result_shift[0],
+                "start" : result_shift[1],
+                "end" : result_shift[2]
+            })
+        logger.info(tomorrow_shift_lists)
+        
+        #LINE登録しているユーザーを取得
+        cur.execute('select * from line_bot;')
+        result_notify_list = cur.fetchall()
+        logger.info(result_notify_list)
+        
         message = ""
-        for result in results:
-            logger.info(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
-            message += f"明日のシフトを通知します。\n\
-                date:{result[0]} start:{result[1]} end:{result[2]}\
-                よろしくお願いします。"
     conn.commit()
-    conn.close()
 
     @LINE_HANDLER.add(MessageEvent, message=TextMessage)
     def on_message(line_event):
