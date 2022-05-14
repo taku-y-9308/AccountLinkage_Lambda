@@ -1,5 +1,6 @@
 from email import message
 import sys,os,logging,psycopg2,json
+from datetime import datetime, date, timedelta,timezone
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -38,11 +39,16 @@ def handler(event, context):
     logger.info(f"line_user_id:{line_user_id}")
     signature = event["headers"]["x-line-signature"]
     body = event["body"]
-
+    
+    #現在時刻(日本時間)を取得
+    today = datetime.now(timezone(timedelta(hours=9))).date() #YYYY-MM-dd型で取得
+    tomorrow = today + timedelta(days=1)
+    testdate = date(2022,6,1)
+    
     with conn.cursor() as cur:
         
         #シフトを収集
-        cur.execute('select date,begin,finish,user_id,username from "ShiftManagementApp_shift" inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id;')
+        cur.execute(f"""select date,begin,finish,user_id,username from "ShiftManagementApp_shift" inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id where date = '{testdate}';""")
         results_shifts = cur.fetchall()
         logger.info(results_shifts)
         tomorrow_shift_lists = []
@@ -54,6 +60,8 @@ def handler(event, context):
                 "end" : result_shift[2]
             })
         logger.info(tomorrow_shift_lists)
+        #logger.info(type(tomorrow_shift_lists[0]['date'])) #<class 'datetime.date'>
+        #logger.info(type(tomorrow_shift_lists[0]['start'])) #<class 'datetime.datetime'>
         
         #LINE登録しているユーザーを取得
         cur.execute('select * from line_bot;')
