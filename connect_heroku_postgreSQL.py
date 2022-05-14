@@ -40,7 +40,7 @@ def handler(event, context):
         message = ""
         for result in results:
             logger.info(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
-            message += f"明日のシフトを通知します。¥n\
+            message += f"明日のシフトを通知します。\n\
                 date:{result[0]} start:{result[1]} end:{result[2]}\
                 よろしくお願いします。"
     conn.commit()
