@@ -39,8 +39,10 @@ def handler(event, context):
         results = cur.fetchall()
         message = ""
         for result in results:
-            print(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
-            message += f"date:{result[0]} start:{result[1]} end:{result[2]}"
+            logger.info(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
+            message += f"明日のシフトを通知します。¥n\
+                date:{result[0]} start:{result[1]} end:{result[2]}\
+                よろしくお願いします。"
     conn.commit()
     conn.close()
 
