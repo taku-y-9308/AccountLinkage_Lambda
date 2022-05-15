@@ -48,10 +48,9 @@ def handler(event, context):
     with conn.cursor() as cur:
         
         #シフトを収集
-        cur.execute("""select "ShiftManagementApp_shift".id,date,begin,finish,"ShiftManagementApp_user".username,"ShiftManagementApp_shift".user_id,line_user_id" \
+        cur.execute('select "ShiftManagementApp_shift".id,date,begin,finish,"ShiftManagementApp_user".username,"ShiftManagementApp_shift".user_id,line_user_id" \
             inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id \
-            inner join line_bot on "ShiftManagementApp_user".id = line_bot.user_id \
-            where date = '"""+{testdate}+"';")
+            inner join line_bot on "ShiftManagementApp_user".id = line_bot.user_id ;')
         results_shifts = cur.fetchall()
         logger.info(results_shifts)
         tomorrow_shift_lists = []
