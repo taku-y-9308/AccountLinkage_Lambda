@@ -53,7 +53,8 @@ def handler(event, context):
             inner join "ShiftManagementApp_user" \
             on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id \
             inner join line_bot \
-            on "ShiftManagementApp_user".id = line_bot.user_id')
+            on "ShiftManagementApp_user".id = line_bot.user_id '\
+            +f"where date ='{testdate}';")
         results_shifts = cur.fetchall()
         logger.info(results_shifts)
         tomorrow_shift_lists = []
