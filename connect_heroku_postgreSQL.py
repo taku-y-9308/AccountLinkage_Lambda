@@ -34,6 +34,7 @@ except psycopg2.OperationalError as e:
 logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
 def handler(event, context):
     logger.info(event)
+    """
     body_str = event["body"]
     body_dict = json.loads(body_str)
     logger.info(type(body_dict))
@@ -41,7 +42,7 @@ def handler(event, context):
     logger.info(f"line_user_id:{line_user_id}")
     signature = event["headers"]["x-line-signature"]
     body = event["body"]
-    
+    """
     #現在時刻(日本時間)を取得
     today = datetime.now(timezone(timedelta(hours=9))).date() #YYYY-MM-dd型で取得
     tomorrow = today + timedelta(days=1)
