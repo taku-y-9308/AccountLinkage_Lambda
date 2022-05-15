@@ -1,5 +1,6 @@
-from email import message
-import sys,os,logging,psycopg2,json
+import os,logging,datetime
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -11,50 +12,15 @@ LINE_CHANNEL_SECRET         = os.environ['LINE_CHANNEL_SECRET']
 LINE_BOT_API = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 LINE_HANDLER = WebhookHandler(LINE_CHANNEL_SECRET)
 
-host = os.environ['HOST']
-username = os.environ['USERNAME']
-password = os.environ['PASSWORD']
-dbname = os.environ['DB_NAME']
-port = os.environ['PORT']
-
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-
-try:
-    conn = psycopg2.connect(f"dbname={dbname} user={username} password={password} host={host} port={port}")
-
-except psycopg2.OperationalError as e:
-    logging.error('ERROR: Unexpected error: Could not connect to PostgreSQL instance.')
-    logging.error(e)
-    sys.exit()
-
-logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
-def handler(event, context):
+def lambda_handler(event, context):
     logger.info(event)
-    body_str = event["body"]
-    body_dict = json.loads(body_str)
-    logger.info(type(body_dict))
-    line_user_id = body_dict["events"][0]["source"]["userId"]
-    logger.info(f"line_user_id:{line_user_id}")
     signature = event["headers"]["x-line-signature"]
     body = event["body"]
 
-    with conn.cursor() as cur:
-        cur.execute('select date,begin,finish,user_id,username from "ShiftManagementApp_shift" inner join "ShiftManagementApp_user" on "ShiftManagementApp_shift".user_id = "ShiftManagementApp_user".id;')
-        conn.commit()
-        results = cur.fetchall()
-        message = ""
-        for result in results:
-            logger.info(f"date:{result[0]} start:{result[1]} end:{result[2]} user_id:{result[3]} username:{result[4]}")
-            message += f"明日のシフトを通知します。¥n\
-                date:{result[0]} start:{result[1]} end:{result[2]}\
-                よろしくお願いします。"
-    conn.commit()
-    conn.close()
-
     @LINE_HANDLER.add(MessageEvent, message=TextMessage)
     def on_message(line_event):
-        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(message))
+        now = datetime.datetime.now()
+        LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(str(now)))
 
     LINE_HANDLER.handle(body, signature)
     return 0
