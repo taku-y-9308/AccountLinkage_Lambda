@@ -106,6 +106,7 @@ def handler(event, context):
             logger.info(f"push_message:{push_message}")
         except LineBotApiError as e:
             logger.error(e)
-
+    """
     LINE_HANDLER.handle(body, signature)
+    """
     return 0
