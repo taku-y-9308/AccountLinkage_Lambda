@@ -86,21 +86,23 @@ def handler(event, context):
     @LINE_HANDLER.add(MessageEvent, message=TextMessage)
     def on_message(line_event):
         LINE_BOT_API.reply_message(line_event.reply_token, TextSendMessage(reply_message))
+    
     for tomorrow_shift_list in tomorrow_shift_lists:
-        
-        #日本時間に変換
-        start_JST = tomorrow_shift_list['start'] + timedelta(hours=9)
-        end_JST = tomorrow_shift_list['end'] + timedelta(hours=9)
-        
-        #LINEの宛先
-        to = tomorrow_shift_list['line_user_id']
+        #LINE登録があるユーザーのみpush通知を行う
+        if tomorrow_shift_list['line_user_id']:
+            #日本時間に変換
+            start_JST = tomorrow_shift_list['start'] + timedelta(hours=9)
+            end_JST = tomorrow_shift_list['end'] + timedelta(hours=9)
+            
+            #LINEの宛先
+            to = tomorrow_shift_list['line_user_id']
 
-        push_message = f"お疲れ様です。\n明日のシフトを通知します。\n{start_JST.strftime('%H:%M:%S')}〜{end_JST.strftime('%H:%M:%S')}\nよろしくお願いします。"
-        try:
-            LINE_BOT_API.push_message(to, TextSendMessage(text=push_message))
-            logger.info(f"push_message:{push_message}")
-        except LineBotApiError as e:
-            logger.error(e)
+            push_message = f"お疲れ様です。\n明日のシフトを通知します。\n{start_JST.strftime('%H:%M:%S')}〜{end_JST.strftime('%H:%M:%S')}\nよろしくお願いします。"
+            try:
+                LINE_BOT_API.push_message(to, TextSendMessage(text=push_message))
+                logger.info(f"push_message:{push_message}")
+            except LineBotApiError as e:
+                logger.error(e)
     """
     LINE_HANDLER.handle(body, signature)
     """
