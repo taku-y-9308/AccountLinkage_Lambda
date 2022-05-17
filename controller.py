@@ -41,11 +41,11 @@ def handler(event, context):
         buttons_template_message = TemplateSendMessage(
             alt_text='Account Link',
             template=ButtonsTemplate(
-                title='Menu',
-                text='Account Link',
+                title='LINEアカウント連携',
+                text='下のボタンよりLINEアカウントの連携を行ってください',
                 actions=[
                     URIAction(
-                        label='uri',
+                        label='LINEアカウント連携',
                         uri="https://shiftmanagementapp-heroku.herokuapp.com/account_linkage?linkToken="+str(link_token_response.link_token)
                     )
                 ]
