@@ -56,11 +56,34 @@ def handler(event, context):
     """AccountLinkEventを受信"""
     @LINE_HANDLER.add(AccountLinkEvent)
     def account_linkage(event):
-        user_id = event.source.user_id
-        logger.debug(f"user_id:{user_id}")
+        line_user_id = event.source.user_id
+        logger.debug(f"line_user_id:{line_user_id}")
         nonce = event.link.nonce
         logger.debug(f"nonce:{nonce}")
-    
+        
+        #heroku postgerSQLに接続
+        host = os.environ['HOST']
+        username = os.environ['USERNAME']
+        password = os.environ['PASSWORD']
+        dbname = os.environ['DB_NAME']
+        port = os.environ['PORT']
+        
+        try:
+            conn = psycopg2.connect(f"dbname={dbname} user={username} password={password} host={host} port={port}")
+        
+        except psycopg2.OperationalError as e:
+            logging.error('ERROR: Unexpected error: Could not connect to PostgreSQL instance.')
+            logging.error(e)
+            sys.exit()
+        
+        logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
+
+        with conn.cursor() as cur:
+            cur.execute(f"""UPDATE "ShiftManagementApp_line_user_id" SET line_user_id = '{line_user_id}' WHERE nonce = '{nonce}';""")
+        conn.commit()
+        
+        success_message = '連携完了しました'
+        LINE_BOT_API.push_message(line_user_id, TextSendMessage(text=success_message))
     LINE_HANDLER.handle(body, signature)
     return 0
     
