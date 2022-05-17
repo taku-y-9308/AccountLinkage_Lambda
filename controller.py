@@ -36,9 +36,8 @@ def handler(event, context):
     @LINE_HANDLER.add(FollowEvent)
     def account_linkage(event):
         user_id = event.source.user_id
-        logger.info(f"user_id:{user_id}")
+        logger.debug(f"user_id:{user_id}")
         link_token_response = LINE_BOT_API.issue_link_token(user_id)
-        
         buttons_template_message = TemplateSendMessage(
             alt_text='Account Link',
             template=ButtonsTemplate(
@@ -47,7 +46,7 @@ def handler(event, context):
                 actions=[
                     URIAction(
                         label='uri',
-                        uri=f"https://shiftmanagementapp-heroku.herokuapp.com/account_linkage?linkToken={link_token_response}"
+                        uri="https://shiftmanagementapp-heroku.herokuapp.com/account_linkage?linkToken="+str(link_token_response.link_token)
                     )
                 ]
             )
