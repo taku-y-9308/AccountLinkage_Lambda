@@ -18,12 +18,9 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 def handler(event, context):
-    logger.info(event)
     body_str = event["body"]
     body_dict = json.loads(body_str)
-    logger.info(type(body_dict))
     line_user_id = body_dict["events"][0]["source"]["userId"]
-    logger.info(f"line_user_id:{line_user_id}")
     signature = event["headers"]["x-line-signature"]
     body = event["body"]
     
@@ -36,7 +33,7 @@ def handler(event, context):
     @LINE_HANDLER.add(FollowEvent)
     def send_account_linkage_url(event):
         user_id = event.source.user_id
-        logger.debug(f"user_id:{user_id}")
+        logger.info(f'Followイベントを受信しました。 line_user_id:{user_id}')
         link_token_response = LINE_BOT_API.issue_link_token(user_id)
         buttons_template_message = TemplateSendMessage(
             alt_text='Account Link',
@@ -57,9 +54,8 @@ def handler(event, context):
     @LINE_HANDLER.add(AccountLinkEvent)
     def account_linkage(event):
         line_user_id = event.source.user_id
-        logger.debug(f"line_user_id:{line_user_id}")
         nonce = event.link.nonce
-        logger.debug(f"nonce:{nonce}")
+        logger.info(f"AccountLinkEventを受信しました。user_id:{line_user_id},nonce:{nonce}")
         
         #heroku postgerSQLに接続
         host = os.environ['HOST']
@@ -78,12 +74,19 @@ def handler(event, context):
         
         logger.info("SUCCESS: Connection to heroku PostgreSQL succeeded")
 
-        with conn.cursor() as cur:
-            cur.execute(f"""UPDATE "ShiftManagementApp_line_user_id" SET line_user_id = '{line_user_id}' WHERE nonce = '{nonce}';""")
-        conn.commit()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(f"""UPDATE "ShiftManagementApp_line_user_id" SET line_user_id = '{line_user_id}' WHERE nonce = '{nonce}';""")
+            conn.commit()
+            logger.info("SUCCESS: DBの更新が正常に終了しました")
+        except Exception as e:
+            logger.error('ERROR: DB更新時にエラーが発生しました')
+            logger.error(e)
+            sys.exit()
         
         success_message = '連携完了しました'
         LINE_BOT_API.push_message(line_user_id, TextSendMessage(text=success_message))
+        logger.info('連携完了メッセージの送信が完了しました')
     LINE_HANDLER.handle(body, signature)
     return 0
     
