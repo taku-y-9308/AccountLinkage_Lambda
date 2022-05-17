@@ -5,7 +5,7 @@ from linebot import (
     LineBotApi, WebhookHandler
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, FollowEvent, TemplateSendMessage, ButtonsTemplate, PostbackAction, MessageAction, URIAction
+    MessageEvent, TextMessage, TextSendMessage, FollowEvent, TemplateSendMessage, ButtonsTemplate, PostbackAction, MessageAction, URIAction, AccountLinkEvent
 )
 from linebot.exceptions import LineBotApiError
 
@@ -34,7 +34,7 @@ def handler(event, context):
     
     """"Followイベントを受信"""
     @LINE_HANDLER.add(FollowEvent)
-    def account_linkage(event):
+    def send_account_linkage_url(event):
         user_id = event.source.user_id
         logger.debug(f"user_id:{user_id}")
         link_token_response = LINE_BOT_API.issue_link_token(user_id)
@@ -53,7 +53,13 @@ def handler(event, context):
         )
         LINE_BOT_API.push_message(user_id, buttons_template_message)
 
-        
+    """AccountLinkEventを受信"""
+    @LINE_HANDLER.add(AccountLinkEvent)
+    def account_linkage(event):
+        user_id = event.source.user_id
+        logger.debug(f"user_id:{user_id}")
+        nonce = event.link.nonce
+        logger.debug(f"nonce:{nonce}")
     
     LINE_HANDLER.handle(body, signature)
     return 0
