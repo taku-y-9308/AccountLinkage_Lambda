@@ -1,4 +1,6 @@
 # notify-shift
-shiftmanagementappからデータを取得  
+Messaging APIを使用してアカウント連携  
 ↓  
-Lambdaを使用してLINE通知を行う
+Lambdaを定期実行してPostgreSQLからデータ取得  
+↓  
+シフト前日にLINE通知を行う
