@@ -97,7 +97,7 @@ def handler(event, context):
             #LINEの宛先
             to = tomorrow_shift_list['line_user_id']
 
-            push_message = f"お疲れ様です。\n明日のシフトを通知します。\n{start_JST.strftime('%H:%M:%S')}〜{end_JST.strftime('%H:%M:%S')}\nよろしくお願いします。"
+            push_message = f"お疲れ様です。\n明日のシフトを通知します。\n{start_JST.strftime('%H:%M')}〜{end_JST.strftime('%H:%M')}\nよろしくお願いします。"
             try:
                 LINE_BOT_API.push_message(to, TextSendMessage(text=push_message))
                 logger.info(f"push_message:{push_message}")
