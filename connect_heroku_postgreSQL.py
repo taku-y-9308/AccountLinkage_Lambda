@@ -46,7 +46,7 @@ def handler(event, context):
     #現在時刻(日本時間)を取得
     today = datetime.now(timezone(timedelta(hours=9))).date() #YYYY-MM-dd型で取得
     tomorrow = today + timedelta(days=1)
-    testdate = date(2022,6,1)
+    testdate = date(2022,7,30)
     
     with conn.cursor() as cur:
         
