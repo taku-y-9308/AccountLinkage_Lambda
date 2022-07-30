@@ -1,6 +1,5 @@
 # notify-shift
+LINE友達登録イベントを受信して、登録作業を行う  
 Messaging APIを使用してアカウント連携  
 ↓  
-Lambdaを定期実行してPostgreSQLからデータ取得  
-↓  
-シフト前日にLINE通知を行う
+herokuのDBに登録作業を行う
