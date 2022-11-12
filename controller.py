@@ -84,12 +84,7 @@ def handler(event, context):
             logger.error(e)
             sys.exit()
         
-        success_message = 'LINE連携いただきありがとうございます! \n'
-        +'正常に連携完了しました。\n\n'
-        +'LINE連携により以下のことができるようになります。\n'
-        +'・シフト通知機能\n'
-        +'・シフト締め切り通知機能\n\n'
-        +'なお、LINE連携を解除したい場合は、ブロックしていただくと連携を解除することができます。'
+        success_message = 'LINE連携いただきありがとうございます! \n正常に連携完了しました。\n\nLINE連携により以下のことができるようになります。\n・シフト通知機能\n・シフト締め切り通知機能\n\nなお、LINE連携を解除したい場合は、ブロックしていただくと連携を解除することができます。'
 
         LINE_BOT_API.push_message(line_user_id, TextSendMessage(text=success_message))
         logger.info('連携完了メッセージの送信が完了しました')
